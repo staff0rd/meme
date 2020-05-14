@@ -1,5 +1,13 @@
 FROM golang
 
-RUN go get -u -v github.com/nomad-software/meme
+COPY ./ /src
+
+WORKDIR /src
+
+RUN /src/gen-data.sh
+
+RUN go build
+
+RUN go install
 
 ENTRYPOINT ["meme"]
