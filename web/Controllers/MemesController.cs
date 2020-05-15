@@ -13,10 +13,14 @@ namespace web.Controllers
     public class MemesController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<object> Get()
         {
             return System.IO.Directory.GetFiles("../data/images")
-                .Select(f => Path.GetFileName(f));
+                .OrderBy(f => f)
+                .Select(f => new {
+                    path = Path.Combine("memes", Path.GetFileName(f)),
+                    name = Path.GetFileNameWithoutExtension(f),
+                });
         }
     }
 }

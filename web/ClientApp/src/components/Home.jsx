@@ -9,6 +9,8 @@ export const Home = () => {
   const [files, setFiles] = useState([]);
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
+  const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
+  const cellHeight = isLgUp ? 400 : isSmUp ? 250 : 160;
   
   useEffect(() => {
     const fetchData = async () => {
@@ -21,12 +23,12 @@ export const Home = () => {
   }, []);
 
   return (
-    <GridList cellHeight={isSmUp ? 250 : 160} cols={3}>
+    <GridList cellHeight={cellHeight} cols={3}>
       {files.map((f) => (
-        <GridListTile key={f} cols={f.cols || 1}>
-          <img src={`/memes/${f}`} alt={f} title={f} />
+        <GridListTile key={f.name} cols={1}>
+          <img src={f.path} alt={f.name} title={f.name} />
           <GridListTileBar
-              title={f}
+              title={f.name}
             />
         </GridListTile>
       ))}
