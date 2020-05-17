@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,5 +23,36 @@ namespace web.Controllers
                     name = Path.GetFileNameWithoutExtension(f),
                 });
         }
+
+        [HttpGet]
+        [Route("generate")]
+        public string[] Generate(string meme, string top, string bottom, bool trigger, bool shake)
+        {
+            var args = $"-i {meme} -t \"{top}|{bottom}\"";
+            if (trigger)
+                args += " -trigger";
+            if (shake)
+                args += " -shake";
+
+            var proc = new Process 
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "meme",
+                    Arguments = args,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            proc.Start();
+            var output = new List<string>();
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                string line = proc.StandardOutput.ReadLine();
+                output.Add(line);
+            }
+            return output.ToArray();
+        } 
     }
 }
