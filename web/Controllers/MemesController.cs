@@ -13,6 +13,13 @@ namespace web.Controllers
     [Route("[controller]")]
     public class MemesController : ControllerBase
     {
+        private readonly ILogger<MemesController> _logger;
+
+        public MemesController(ILogger<MemesController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public IEnumerable<object> Get()
         {
@@ -85,6 +92,11 @@ namespace web.Controllers
 
             var output = Read(proc.StandardOutput).ToArray();
             var errors = Read(proc.StandardError).ToArray();
+
+            if (errors.Any())
+                _logger.LogError(args);
+            else
+                _logger.LogInformation(args);
             
             return new Result {
                 Output = output,

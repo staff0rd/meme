@@ -41,8 +41,8 @@ export default ({ handleClose, selectedMeme }) => {
   const classes = useStyles();
   const [output, setOutput] = useState(null);
   const [error, setError] = useState(null);
+  const [imagePath, setImagePath] = useState(selectedMeme.path)
   const generate = () => {
-    debugger;
     fetch(`/memes/generate?meme=${selectedMeme.name}&top=${topLine}&bottom=${bottomLine}&shake=${shake}&trigger=${triggered}`)
     .then(response => {
       response.json()
@@ -52,6 +52,8 @@ export default ({ handleClose, selectedMeme }) => {
           setOutput(null);
         } else {
           setOutput(data.output);
+          const ext = (triggered || shake) ? 'gif' : 'png';
+          setImagePath(`/memes/image/${data.name}.${ext}`);
           setError(null);
         }
       });
@@ -72,7 +74,7 @@ export default ({ handleClose, selectedMeme }) => {
       >
         <Paper className={classes.paper}>
           <Grid container spacing={3} className={classes.container}>
-            <Grid item xs={6} className={classes.preview} style={{backgroundImage: `url(${selectedMeme.path})`}} />
+            <Grid item xs={6} className={classes.preview} style={{backgroundImage: `url(${imagePath})`}} />
             <Grid item xs={6}>
               <form noValidate autoComplete="off">
               <Grid container>
