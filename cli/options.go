@@ -123,9 +123,13 @@ func (opt *Options) PrintUsage() {
 
 	fmt.Println("  Examples")
 	fmt.Println("")
-	color.Cyan("    meme -i kirk-khan -t \"|khaaaan\"")
-	color.Cyan("    meme -i brace-yourselves -t \"Brace yourselves|The memes are coming!\"")
-	color.Cyan("    meme -i http://i.imgur.com/FsWetC0.jpg -t \"|China\"")
-	color.Cyan("    meme -i ~/Pictures/face.png -t \"Hello\"")
+	color.Cyan("    docker run -v $(PWD):/tmp staff0rd/meme -i kirk-khan -t \"|khaaaan\"")
+	color.Cyan("    docker run -v $(PWD):/tmp staff0rd/meme -i brace-yourselves -t \"Brace yourselves|The memes are coming!\"")
+	color.Cyan("    docker run -v $(PWD):/tmp staff0rd/meme -i http://i.imgur.com/FsWetC0.jpg -t \"|China\"")
+	color.Cyan("    docker run -v $(PWD):/tmp staff0rd/meme -i $(PWD)/Pictures/face.png -t \"Hello\"")
+	fmt.Println("")
+	fmt.Println("  Or run the web ui and browse to http://localhost:5000")
+	fmt.Println("")
+	color.Cyan("    docker run -it -p 5000:80 staff0rd/meme -serve")
 	fmt.Println("")
 }
