@@ -28,10 +28,16 @@ const useStyles = makeStyles(theme => ({
       margin: 0,
     },
   },
+  previewContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxHeight: '100%',
+    maxWidth: '100%',
+  },
   preview: {
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'contain',
-    backgroundPosition: 'center',
+    objectFit: 'contain',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
   textfield: {
     width: '100%',
@@ -83,7 +89,9 @@ export default ({ handleClose, selectedMeme }) => {
       >
         <Paper className={classes.paper}>
           <Grid container spacing={3} className={classes.container}>
-            <Grid item xs={6} className={classes.preview} style={{backgroundImage: `url(${imagePath})`}} />
+            <Grid container item xs={6} className={classes.previewContainer}>
+              <img className={classes.preview} src={imagePath} />
+            </Grid>
             <Grid item xs={6}>
               <form noValidate autoComplete="off">
               <Grid container>
