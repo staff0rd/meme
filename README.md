@@ -1,4 +1,25 @@
-# Meme
+# memes in a container
+
+This fork puts [upstream](https://github.com/nomad-software/meme) in a container.
+
+## Run it
+
+The following will drop `meme.png` to your `$(PWD)`
+```bash
+docker run -v $(PWD):/tmp staff0rd/meme -i archer-do-you-want -t "do you want memes in a container?|because this is how you get memes in a container"
+```
+See what it can do
+```bash
+docker run staff0rd/meme --help
+```
+
+## Dev
+
+```bash
+docker run -it --entrypoint bash -v $(PWD):/src -p 5000:5000 staff0rd/meme
+```
+
+# Upstream docs
 **A command line utility for creating [image macro style memes](https://en.wikipedia.org/wiki/Image_macro)**
 
 [![Go report card](https://goreportcard.com/badge/github.com/nomad-software/meme)](https://goreportcard.com/report/github.com/nomad-software/meme)
