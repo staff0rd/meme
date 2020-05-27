@@ -24,16 +24,51 @@ namespace web.Controllers
                 });
         }
 
+        public class Result
+        {
+            public string[] Output { get; set; }
+            public string[] Errors { get; set; }
+            public Guid Name { get; set; }
+        }
+
+        [HttpGet]
+        [Route("image/{name}.{type}")]
+        public async Task<IActionResult> GetImage([FromRoute] Guid name, [FromRoute] string type)
+        {
+            if (type != "gif" && type != "png")
+            {
+                return BadRequest();
+            }
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(System.IO.Path.Combine(
+                "/tmp",
+                $"{name.ToString()}.{type}"
+            ));
+
+            return File(bytes, $"image/{type}");
+        }
+
         [HttpGet]
         [Route("generate")]
-        public string[] Generate(string meme, string top, string bottom, bool trigger, bool shake)
+        public Result Generate(string meme, string top, string bottom, bool trigger, bool shake)
         {
+            Guid name = Guid.NewGuid();
+
             var args = $"-i {meme} -t \"{top}|{bottom}\"";
+
             if (trigger)
                 args += " -trigger";
             if (shake)
                 args += " -shake";
-
+            if (shake || trigger)
+            {
+                args += $" -o /tmp/{name}.gif";
+            }
+            else
+            {
+                args += $" -o /tmp/{name}.png";
+            }
+            
             var proc = new Process 
             {
                 StartInfo = new ProcessStartInfo
@@ -42,17 +77,26 @@ namespace web.Controllers
                     Arguments = args,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     CreateNoWindow = true
                 }
             };
             proc.Start();
-            var output = new List<string>();
-            while (!proc.StandardOutput.EndOfStream)
-            {
-                string line = proc.StandardOutput.ReadLine();
-                output.Add(line);
-            }
-            return output.ToArray();
+
+            var output = Read(proc.StandardOutput).ToArray();
+            var errors = Read(proc.StandardError).ToArray();
+            
+            return new Result {
+                Output = output,
+                Errors = errors,
+                Name = name,
+            };
         } 
+
+        public IEnumerable<string> Read(StreamReader stream)
+        {
+            while (!stream.EndOfStream)
+                yield return stream.ReadLine();
+        }
     }
 }

@@ -5,6 +5,7 @@ import Modal from '@material-ui/core/Modal';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
+import Alert from '@material-ui/lab/Alert';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 
@@ -38,13 +39,28 @@ const useStyles = makeStyles(theme => ({
 
 export default ({ handleClose, selectedMeme }) => {
   const classes = useStyles();
+  const [output, setOutput] = useState(null);
+  const [error, setError] = useState(null);
   const generate = () => {
-    console.log(topLine);
-    console.log(bottomLine);
-
+    debugger;
+    fetch(`/memes/generate?meme=${selectedMeme.name}&top=${topLine}&bottom=${bottomLine}&shake=${shake}&trigger=${triggered}`)
+    .then(response => {
+      response.json()
+      .then(data => {
+        if (data.errors.length) {
+          setError(data.errors);
+          setOutput(null);
+        } else {
+          setOutput(data.output);
+          setError(null);
+        }
+      });
+    });
   };
   const [topLine, setTopLine] = useState(null);
   const [bottomLine, setBottomLine] = useState(null);
+  const [shake, setShake] = useState(false);
+  const [triggered, setTriggered] = useState(false);
 
   return (
       <Modal
@@ -70,13 +86,13 @@ export default ({ handleClose, selectedMeme }) => {
                   <Grid container>
                     <Grid item xs={6}>
                       <FormControlLabel
-                        control={<Checkbox />}
+                        control={<Checkbox value={shake} onChange={e => setShake(e.target.checked)} />}
                         label="Trigger" 
                       />
                     </Grid>
                     <Grid item xs={6}>
                       <FormControlLabel
-                        control={<Checkbox />}
+                        control={<Checkbox value={triggered} onChange={e => setTriggered(e.target.checked)} />}
                         label="Shake" 
                       />
                     </Grid>
@@ -85,6 +101,16 @@ export default ({ handleClose, selectedMeme }) => {
                 <Grid item xs={12}>
                   <Button variant='contained' color='primary' onClick={generate}>Generate</Button>
                 </Grid>
+                { output && (
+                  <Grid item xs={12}>
+                    <Alert severity="success">Image generated</Alert>
+                  </Grid>
+                )}
+                { error && (
+                  <Grid item xs={12}>
+                    <Alert severity="error">{error}</Alert>
+                  </Grid>
+                )}
               </Grid>
             </form> 
             </Grid>
