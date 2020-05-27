@@ -17,6 +17,8 @@ docker run staff0rd/meme --help
 
 ```bash
 docker run -it --entrypoint bash -v $(PWD):/src -p 5000:5000 staff0rd/meme
+cd web
+dotnet run --urls http://0.0.0.0:5000
 ```
 
 # Upstream docs
