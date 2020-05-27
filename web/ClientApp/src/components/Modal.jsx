@@ -5,6 +5,7 @@ import Modal from '@material-ui/core/Modal';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from '@material-ui/lab/Alert';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
@@ -34,17 +35,25 @@ const useStyles = makeStyles(theme => ({
   },
   textfield: {
     width: '100%',
-  }
+  },
+  result: {
+    marginTop: theme.spacing(3),
+  },
 }));
 
 export default ({ handleClose, selectedMeme }) => {
   const classes = useStyles();
   const [output, setOutput] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [imagePath, setImagePath] = useState(selectedMeme.path)
   const generate = () => {
+    setLoading(true);
+    setError(null);
+    setOutput(null);
     fetch(`/memes/generate?meme=${selectedMeme.name}&top=${topLine}&bottom=${bottomLine}&shake=${shake}&trigger=${triggered}`)
     .then(response => {
+      setLoading(false);
       response.json()
       .then(data => {
         if (data.errors.length) {
@@ -59,8 +68,8 @@ export default ({ handleClose, selectedMeme }) => {
       });
     });
   };
-  const [topLine, setTopLine] = useState(null);
-  const [bottomLine, setBottomLine] = useState(null);
+  const [topLine, setTopLine] = useState("");
+  const [bottomLine, setBottomLine] = useState("");
   const [shake, setShake] = useState(false);
   const [triggered, setTriggered] = useState(false);
 
@@ -88,29 +97,30 @@ export default ({ handleClose, selectedMeme }) => {
                   <Grid container>
                     <Grid item xs={6}>
                       <FormControlLabel
-                        control={<Checkbox value={shake} onChange={e => setShake(e.target.checked)} />}
-                        label="Trigger" 
+                        control={<Checkbox value={shake} onChange={e => setTriggered(e.target.checked)} />}
+                        label="Triggered" 
                       />
                     </Grid>
                     <Grid item xs={6}>
                       <FormControlLabel
-                        control={<Checkbox value={triggered} onChange={e => setTriggered(e.target.checked)} />}
+                        control={<Checkbox value={triggered} onChange={e => setShake(e.target.checked)} />}
                         label="Shake" 
                       />
                     </Grid>
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
-                  <Button variant='contained' color='primary' onClick={generate}>Generate</Button>
+                  { loading && <CircularProgress /> }
+                  { !loading && <Button variant='contained' color='primary' onClick={generate}>Generate</Button> }
                 </Grid>
                 { output && (
                   <Grid item xs={12}>
-                    <Alert severity="success">Image generated</Alert>
+                    <Alert className={classes.result} severity="success">Image generated</Alert>
                   </Grid>
                 )}
                 { error && (
                   <Grid item xs={12}>
-                    <Alert severity="error">{error}</Alert>
+                    <Alert className={classes.result} severity="error">{error}</Alert>
                   </Grid>
                 )}
               </Grid>

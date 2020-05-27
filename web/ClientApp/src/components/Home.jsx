@@ -12,7 +12,7 @@ export const Home = () => {
   const theme = useTheme();
   const isSmUp = useMediaQuery(theme.breakpoints.up('sm'));
   const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
-  const cellHeight = isLgUp ? 400 : isSmUp ? 250 : 160;
+  const cellHeight = isSmUp ? 250 : 160;
   const handleClose = () => setSelected(null);
  
   useEffect(() => {
