@@ -3,10 +3,17 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme, makeStyles } from '@material-ui/core/styles';
 import Modal from './Modal';
 
+const useStyles = makeStyles(theme => ({
+  tile: {
+    cursor: 'pointer',
+  },
+}));
+
 export const Home = () => {
+  const classes = useStyles();
   const [files, setFiles] = useState([]);
   const [selected, setSelected] = useState(null);
   const theme = useTheme();
@@ -29,7 +36,7 @@ export const Home = () => {
     <>
       <GridList cellHeight={cellHeight} cols={3}>
         {files.map((f) => (
-          <GridListTile key={f.name} cols={1} onClick={() => setSelected(f)}>
+          <GridListTile className={classes.tile} key={f.name} cols={1} onClick={() => setSelected(f)}>
             <img src={f.path} alt={f.name} title={f.name} />
             <GridListTileBar
                 title={f.name}
