@@ -9,7 +9,7 @@
 docker run -it -p 8085:80 staff0rd/meme -serve
 ```
 
-Then browse to http://localhost:805
+Then browse to http://localhost:8085
 
 ## Command Line
 
